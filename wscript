@@ -12,14 +12,21 @@ def set_options(opt):
 def configure(conf):
 	conf.check_tool('compiler_cxx')
 	conf.check_tool('node_addon')
+	conf.check(lib='dbxml-2.5',  uselib_store='dbxml-2.5', mandatory=True)
+	conf.check(lib='xerces-c',  uselib_store='xerces-c', mandatory=True)
+	conf.check(lib='xqilla',  uselib_store='xqilla', mandatory=True)
+	conf.check(lib='db_cxx-4.8',  uselib_store='db_cxx-4.8', mandatory=True)
 
-	conf.env.append_value('CCFLAGS',  '-I/Users/mattcg/Source/dbxml-2.5.16/install/include')
-	conf.env.append_value('CXXFLAGS',  '-I/Users/mattcg/Source/dbxml-2.5.16/install/include')
+	# BERKELEY DB XML must be installed to /usr/local
+	# i.e.
+	# cd dbxml-2.5.16
+	# ./buildall.sh --prefix=/usr/local
 
 def build(bld):
 	obj = bld.new_task_gen('cxx', 'shlib', 'node_addon')
 	obj.target = 'binding'
 	obj.source = "binding.cc"
+	obj.uselib = "dbxml-2.5 xerces-c xqilla db_cxx-4.8"
 
 def shutdown():
 	# HACK to get binding.node out of build directory.
